@@ -432,6 +432,7 @@ body.swiping #sw-divider,body.swiping .sw-lab{display:block}
     display:none !important;
     background:rgba(11,14,20,.985);
     -webkit-overflow-scrolling:touch;
+    touch-action:pan-y;
   }
   /* small drag-handle indicator at the top of each drawer */
   #tour.mob-open::before,#scene-events.mob-open::before,
@@ -639,6 +640,15 @@ const osmLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 const esriSat =L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Esri',maxZoom:19});
 const cartoDark=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'CARTO',maxZoom:19,subdomains:'abcd'});
 const map=L.map('map',{layers:[cartoDark],zoomSnap:0,zoomDelta:0.5,zoomControl:true}).setView([12.5,104.0],6);
+/* the four panels live inside #map; without this, taps/scrolls on them bubble up
+   and Leaflet pans the map underneath, so cards can't be scrolled on touch devices */
+['tour','scene-events','testimony','tm'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el && L.DomEvent){
+    L.DomEvent.disableClickPropagation(el);
+    L.DomEvent.disableScrollPropagation(el);
+  }
+});
 const candLayer=L.layerGroup().addTo(map);
 const osmLayerObs=L.layerGroup(),msLayerObs=L.layerGroup();
 const uncLayer=L.layerGroup().addTo(map);
