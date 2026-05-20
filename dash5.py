@@ -378,15 +378,66 @@ body.swiping #sw-divider,body.swiping .sw-lab{display:block}
 .poi-ico{border-radius:50%;border:2px solid #fff;box-shadow:0 0 4px #000}
 .poi-lbl{font-size:10px;color:#fff;background:rgba(10,12,18,.78);padding:1px 5px;border-radius:3px;white-space:nowrap;border:1px solid #3a4560}
 
-/* narrow viewports: stack the sidebar above the map and shrink the overlay panels */
+/* per-panel fold buttons (works on desktop too — lets users hide individual panels) */
+.fold-btn{background:none;border:none;color:#7a8696;cursor:pointer;font-size:14px;
+   padding:0 5px;line-height:1;height:auto;min-width:auto}
+.fold-btn:hover{color:#cde}
+#tour.folded > :not(.thd),
+#tm.folded > :not(.hd),
+#scene-events.folded > :not(.sh),
+#testimony.folded > :not(.th){display:none}
+#scene-events.folded,#testimony.folded{max-height:none}
+
+/* mobile: panels become bottom drawers; a tab bar lets you switch */
+#mobile-tabs{display:none}
 @media (max-width: 760px){
-  #app{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:100vh}
-  #side{max-height:38vh;border-right:none;border-bottom:1px solid #222;padding:10px}
-  body.touring #side{display:none}
-  #tour,#tm{width:96%}
-  #scene-events,#testimony{width:min(94%,300px)}
-  #bigyear{font-size:48px}
-  #splash h1{font-size:23px}
+  #app{grid-template-columns:1fr}
+  #side{display:none}
+  #bigyear{font-size:34px;top:4px;left:8px}
+  .tm-badge,.legend{display:none}
+  .leaflet-control-zoom{display:none}
+
+  #tour, #scene-events, #testimony, #tm{
+    position:fixed !important;
+    left:0; right:0; bottom:54px; top:auto;
+    width:auto !important; max-width:none !important;
+    transform:translateY(110%);
+    transition:transform .26s ease-out;
+    border-radius:12px 12px 0 0;
+    max-height:74vh; overflow-y:auto;
+    z-index:1400; margin:0;
+    padding:11px 13px;
+  }
+  #tour.mob-open, #scene-events.mob-open, #testimony.mob-open, #tm.mob-open{
+    transform:translateY(0);
+  }
+  /* folded state on mobile: collapse to just the header */
+  #tour.folded.mob-open,#tm.folded.mob-open,
+  #scene-events.folded.mob-open,#testimony.folded.mob-open{max-height:60px}
+
+  #mobile-tabs{
+    display:flex;
+    position:fixed; left:6px; right:6px; bottom:6px;
+    z-index:1500; gap:4px;
+    background:rgba(10,12,18,.95); border:1px solid #2a3550;
+    border-radius:9px; padding:5px;
+    box-shadow:0 -2px 12px rgba(0,0,0,.5);
+  }
+  #mobile-tabs button{
+    flex:1; background:#1f2942; color:#cde;
+    border:1px solid #34425a; border-radius:6px;
+    padding:8px 2px; font-size:10.5px; cursor:pointer; line-height:1.3;
+  }
+  #mobile-tabs button.active{background:#2a5a8a;border-color:#4a8ac0;color:#fff}
+  #mobile-tabs button.disabled{opacity:.32}
+
+  #splash h1{font-size:22px}
+  #splash p{font-size:13px}
+  #splash button{padding:11px 18px;font-size:13px}
+
+  /* tour panel sub-elements compacter on mobile */
+  #tour-img img{height:96px}
+  #tour .nav button{padding:0 8px;height:30px;font-size:11.5px}
 }
 </style></head>
 <body>
@@ -432,11 +483,13 @@ KK Park / Dara Sakor / O'Smach はOSM整備が薄くPOI希薄。<br>
 </div><div id="map">
   <div id="bigyear">—</div>
   <div id="scene-events">
-    <div class="sh"><span class="st">この地点の出来事</span><span class="sc" id="scene-yr"></span></div>
+    <div class="sh"><span class="st">この地点の出来事</span><span class="sc" id="scene-yr"></span>
+      <button class="fold-btn" data-fold="scene-events" title="折りたたみ">▾</button></div>
     <div id="scene-list"></div>
   </div>
   <div id="testimony">
-    <div class="th"><span class="tt">証言 — ここにいた人々の声</span><span class="tc" id="testimony-n"></span></div>
+    <div class="th"><span class="tt">証言 — ここにいた人々の声</span><span class="tc" id="testimony-n"></span>
+      <button class="fold-btn" data-fold="testimony" title="折りたたみ">▾</button></div>
     <div id="testimony-list"></div>
   </div>
   <div class="tm-badge" id="tm-badge">▶ でガイドツアー / 候補クリックで個別起動</div>
@@ -449,6 +502,7 @@ KK Park / Dara Sakor / O'Smach はOSM整備が薄くPOI希薄。<br>
     <div class="thd">
       <span class="tname" id="tour-name">—</span>
       <span class="stop" id="tour-stop"></span>
+      <button class="fold-btn" data-fold="tour" title="折りたたみ">▾</button>
       <button class="close" id="tour-close" title="ツアー終了">✕</button>
     </div>
     <div id="tour-img"></div>
@@ -473,6 +527,7 @@ KK Park / Dara Sakor / O'Smach はOSM整備が薄くPOI希薄。<br>
         <option value="2400" selected>ふつう</option>
         <option value="1500">はやい</option>
       </select>
+      <button class="fold-btn" data-fold="tm" title="折りたたみ">▾</button>
       <button class="close" id="tm-close" title="閉じる">✕</button>
     </div>
     <div class="ctl" id="tm-ctl">
@@ -504,6 +559,13 @@ KK Park / Dara Sakor / O'Smach はOSM整備が薄くPOI希薄。<br>
       </div>
     </div>
   </div>
+</div>
+
+<div id="mobile-tabs">
+  <button data-tab="tour">📖<br>ツアー</button>
+  <button data-tab="scene-events">📰<br>出来事</button>
+  <button data-tab="testimony">🗣<br>証言</button>
+  <button data-tab="tm">🕒<br>時間</button>
 </div>
 
 <script src="vendor/leaflet/leaflet.js"></script>
@@ -991,6 +1053,60 @@ TOP_LEGALS.forEach(le=>{
   const d=document.createElement('div');d.className='sanc';
   d.innerHTML=`⚖ ${le.name} <small style="color:#888">(${le.jurisdiction||'-'}) ${le.programs||''}</small>`;
   lg.appendChild(d);
+});
+
+/* ---------- per-panel fold buttons + mobile drawer / tab bar ---------- */
+const MOB_PANELS=['tour','scene-events','testimony','tm'];
+const isMobile=()=>window.matchMedia('(max-width: 760px)').matches;
+
+document.querySelectorAll('.fold-btn').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const id=btn.dataset.fold;
+    const panel=document.getElementById(id);
+    panel.classList.toggle('folded');
+    btn.textContent=panel.classList.contains('folded')?'▴':'▾';
+  });
+});
+
+function updateMobileTabs(){
+  MOB_PANELS.forEach(id=>{
+    const panel=document.getElementById(id);
+    const btn=document.querySelector(`#mobile-tabs button[data-tab="${id}"]`);
+    if(!panel||!btn)return;
+    btn.classList.toggle('disabled', !panel.classList.contains('on'));
+    btn.classList.toggle('active', panel.classList.contains('mob-open'));
+  });
+}
+function mobToggle(id){
+  if(!isMobile())return;
+  const panel=document.getElementById(id);
+  if(!panel||!panel.classList.contains('on'))return;
+  const opening=!panel.classList.contains('mob-open');
+  MOB_PANELS.forEach(o=>document.getElementById(o).classList.remove('mob-open'));
+  if(opening)panel.classList.add('mob-open');
+  updateMobileTabs();
+}
+document.querySelectorAll('#mobile-tabs button').forEach(b=>{
+  b.addEventListener('click',()=>mobToggle(b.dataset.tab));
+});
+
+/* watch panel .on/.mob-open class changes — auto-update tabs, auto-open tour on mobile */
+MOB_PANELS.forEach(id=>{
+  const panel=document.getElementById(id);
+  if(!panel)return;
+  new MutationObserver(()=>{
+    updateMobileTabs();
+    if(id==='tour' && isMobile() && panel.classList.contains('on')
+        && !panel.classList.contains('mob-open')){
+      setTimeout(()=>mobToggle('tour'),120);
+    }
+  }).observe(panel,{attributes:true,attributeFilter:['class']});
+});
+updateMobileTabs();
+window.addEventListener('resize',()=>{
+  if(!isMobile()) MOB_PANELS.forEach(o=>document.getElementById(o).classList.remove('mob-open'));
+  updateMobileTabs();
 });
 </script></body></html>"""
 
