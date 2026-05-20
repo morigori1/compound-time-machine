@@ -1091,23 +1091,45 @@ document.querySelectorAll('#mobile-tabs button').forEach(b=>{
   b.addEventListener('click',()=>mobToggle(b.dataset.tab));
 });
 
-/* watch panel .on/.mob-open class changes — auto-update tabs, auto-open tour on mobile */
+/* watch panel .on changes — refresh tab availability. Only react to the .on
+   false->true transition for the tour auto-open, so that other tab taps (which
+   transiently strip every panel's .mob-open) don't trigger a feedback re-open. */
+const _wasOn={};
+MOB_PANELS.forEach(id=>{ const p=document.getElementById(id); _wasOn[id]=!!(p&&p.classList.contains('on')); });
 MOB_PANELS.forEach(id=>{
   const panel=document.getElementById(id);
   if(!panel)return;
   new MutationObserver(()=>{
+    const nowOn=panel.classList.contains('on');
     updateMobileTabs();
-    if(id==='tour' && isMobile() && panel.classList.contains('on')
-        && !panel.classList.contains('mob-open')){
-      setTimeout(()=>mobToggle('tour'),120);
+    if(id==='tour' && isMobile() && nowOn && !_wasOn[id]){
+      setTimeout(()=>mobToggle('tour'),140);
     }
+    _wasOn[id]=nowOn;
   }).observe(panel,{attributes:true,attributeFilter:['class']});
 });
 updateMobileTabs();
 window.addEventListener('resize',()=>{
   if(!isMobile()) MOB_PANELS.forEach(o=>document.getElementById(o).classList.remove('mob-open'));
   updateMobileTabs();
+  if(map && map.invalidateSize) map.invalidateSize();
 });
+
+/* belt-and-suspenders: also open the tour drawer directly from the splash button on mobile,
+   so it does not depend on the observer firing in time. */
+const _spTour=document.getElementById('sp-tour');
+if(_spTour){
+  _spTour.addEventListener('click',()=>{
+    if(window.matchMedia('(max-width: 760px)').matches){
+      setTimeout(()=>{
+        const t=document.getElementById('tour');
+        if(t && t.classList.contains('on') && !t.classList.contains('mob-open')){
+          mobToggle('tour');
+        }
+      },220);
+    }
+  });
+}
 </script></body></html>"""
 
 html = (HTML.replace('${TOURLEN}', str(len(candidates)))
