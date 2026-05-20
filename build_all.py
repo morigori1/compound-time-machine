@@ -24,6 +24,7 @@ PHASES = [
     ('phase8_event_images.py', 'per-event preview images (og:image)'),
     ('phase9_testimony.py',    'survivor / rescuer testimony'),
     ('phase10_local_life.py',  'local-life spots + daily-life snippets'),
+    ('phase11_details.py',     'granular lawlessness-texture pills'),
     ('dash5.py',               'render index.html'),
 ]
 

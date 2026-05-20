@@ -34,6 +34,7 @@ HAS_IMGRES = has_table('image_resource')
 HAS_TESTIMONY = has_table('testimony')
 HAS_SPOT = has_table('local_spot')
 HAS_LIFE = has_table('life_snippet')
+HAS_DETAIL = has_table('danger_detail')
 
 candidates = []
 for row in cur.execute("""SELECT c.id, c.canonical_id, c.label, c.rep_lat, c.rep_lon,
@@ -114,6 +115,11 @@ for row in cur.execute("""SELECT c.id, c.canonical_id, c.label, c.rep_lat, c.rep
                       WHERE candidate_id=? ORDER BY ord""", (cid,))
         life = [{'topic': r[0], 'text': r[1], 'src_label': r[2], 'src': r[3]}
                 for r in c2.fetchall()]
+    details = []
+    if HAS_DETAIL:
+        c2.execute("""SELECT category, text, source_url FROM danger_detail
+                      WHERE candidate_id=? ORDER BY id""", (cid,))
+        details = [{'cat': r[0], 'text': r[1], 'src': r[2]} for r in c2.fetchall()]
     candidates.append({'id': cid, 'label': label, 'lat': lat, 'lon': lon,
                        'view_lat': view_lat, 'view_lon': view_lon,
                        'kind': kind, 'status': status, 'notes': notes,
@@ -124,7 +130,7 @@ for row in cur.execute("""SELECT c.id, c.canonical_id, c.label, c.rep_lat, c.rep
                        'sanctions': sanctions, 'events': events_local, 'aliases': aliases,
                        'imagery': imagery, 'poi': poi, 'narration': narration,
                        'eras': eras, 'images': images, 'testimony': testimony,
-                       'spots': spots, 'life': life})
+                       'spots': spots, 'life': life, 'details': details})
 
 global_events = [{'kind': r[0], 'date': r[1], 'summary': r[2], 'res': r[3], 'url': r[4], 'img': r[5]}
                  for r in cur.execute("""SELECT e.kind, e.happened_on, e.summary,
@@ -343,6 +349,20 @@ body.swiping #sw-divider,body.swiping .sw-lab{display:block}
 .tq-role.family{background:#342848;color:#c9b0e6}
 .tq .tq-src{font-size:9px;color:#7f88a4;text-decoration:none;margin-left:6px}
 .tq .tq-src:hover{color:#9cf}
+
+/* "lawlessness texture" pill strip — small concrete details above the testimonies */
+.detail-strip{margin:4px 0 12px;padding-bottom:10px;border-bottom:1px solid #2a2030}
+.detail-strip .dh{font-size:11px;font-weight:700;color:#e6c6d2;margin-bottom:6px;letter-spacing:.02em}
+.detail-strip .dh small{color:#7a8696;font-weight:400;font-size:9.5px;margin-left:6px}
+.dpill{display:inline-block;font-size:10.5px;padding:3px 9px;border-radius:11px;margin:2px 3px 2px 0;
+   background:#211720;border:1px solid #3a2a36;color:#dde;text-decoration:none;line-height:1.6;
+   cursor:pointer;transition:filter .15s ease}
+.dpill:hover{filter:brightness(1.25)}
+.dpill.violence{background:#3a1820;border-color:#5a2030;color:#f8c0c8}
+.dpill.control{background:#33291a;border-color:#503a20;color:#fcc99a}
+.dpill.trafficking{background:#2a1f3a;border-color:#3f2856;color:#cfb0e6}
+.dpill.conditions{background:#1a2a3a;border-color:#284058;color:#b0d0e6}
+.dpill.complicity{background:#2a2730;border-color:#3a3540;color:#c6c0cf}
 
 /* event viewer (link-based image viewer) */
 #viewer{position:fixed;inset:0;background:rgba(6,8,12,.88);z-index:3000;display:none;
@@ -701,11 +721,24 @@ const testimonyEl=document.getElementById('testimony');
 const testimonyList=document.getElementById('testimony-list');
 let evtList=[],evtFired=0,lastFrameIdx=-1;
 const ROLE_JA={survivor:'生還者',worker:'労働者',rescuer:'救出者',witness:'目撃者',family:'家族'};
+const CAT_JA={violence:'暴力',control:'監禁・統制',trafficking:'売買・転送',conditions:'労働・環境',complicity:'共犯・隠蔽'};
 function renderTestimony(c){
   const ts=(c&&c.testimony)||[];
+  const dt=(c&&c.details)||[];
   testimonyList.innerHTML='';
   document.getElementById('testimony-n').textContent=ts.length?ts.length+'件の声':'';
-  if(!ts.length){ testimonyEl.classList.remove('on'); return; }
+  if(!ts.length && !dt.length){ testimonyEl.classList.remove('on'); return; }
+  if(dt.length){
+    const pills=dt.map(d=>{
+      const lbl=(CAT_JA[d.cat]||'')+(d.src?' — 出典':'');
+      return d.src
+        ? `<a class="dpill ${d.cat}" href="${d.src}" target="_blank" rel="noopener noreferrer" title="${lbl}">${d.text}</a>`
+        : `<span class="dpill ${d.cat}" title="${lbl}">${d.text}</span>`;
+    }).join('');
+    const strip=document.createElement('div');strip.className='detail-strip';
+    strip.innerHTML=`<div class="dh">細部 — 治安のテクスチャ <small>(${dt.length}件・タップで出典)</small></div>${pills}`;
+    testimonyList.appendChild(strip);
+  }
   ts.forEach(t=>{
     const d=document.createElement('div');d.className='tq';
     d.innerHTML='<span class="tq-mark">❝</span>'
