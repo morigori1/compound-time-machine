@@ -11,7 +11,7 @@ DB = os.path.join(HERE, 'compounds.db')
 CONFIG_URL = 'https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json'
 UA = 'compounds-poc/0.4'
 TILE_Z = 15           # ~1.2km tile — matches candidate uncertainty radius
-MIN_GAP_DAYS = 80     # curate full release list down to ~quarterly
+MIN_GAP_DAYS = 0      # scan every Wayback release — the hash diff keeps only distinct imagery
 
 con = sqlite3.connect(DB)
 cur = con.cursor()

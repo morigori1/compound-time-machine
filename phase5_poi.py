@@ -239,7 +239,7 @@ for cand_id, can_id, label, lat, lon in cands:
         grid[(round(plat / CELL), round(plon / CELL))].append((plat, plon))
     cells = sorted(grid.items(), key=lambda kv: len(kv[1]), reverse=True)
     clusters = 0
-    for ci, (_, members) in enumerate(cells[:3]):
+    for ci, (_, members) in enumerate(cells[:10]):
         if len(members) < 12:
             break
         clat = sum(m[0] for m in members) / len(members)

@@ -59,7 +59,7 @@ def overpass(lat, lon):
          f'nwr(around:900,{lat},{lon})[amenity~"^(restaurant|cafe|fast_food|bar|pub|food_court|marketplace)$"][name];'
          f'nwr(around:900,{lat},{lon})[shop~"^(supermarket|convenience|mall|bakery)$"][name];'
          f'nwr(around:900,{lat},{lon})[tourism~"^(hotel|guest_house|hostel)$"][name];'
-         f');out center tags 150;')
+         f');out center tags 500;')
     data = urllib.parse.urlencode({'data': q}).encode()
     req = urllib.request.Request(OVERPASS, data=data,
                                  headers={'User-Agent': UA, 'Accept': 'application/json'})

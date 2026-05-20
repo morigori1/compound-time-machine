@@ -26,6 +26,16 @@ def has_table(name):
     return cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (name,)).fetchone() is not None
 
 
+def osm_cat(tags):
+    """Compress OSM tags down to a single category char so we can embed every observation."""
+    if tags.get('amenity') == 'casino': return 'c'
+    if tags.get('tourism') == 'hotel': return 'h'
+    if tags.get('landuse') == 'industrial': return 'i'
+    if tags.get('landuse') == 'commercial': return 'm'
+    if tags.get('leisure') == 'resort': return 'r'
+    return 'b'
+
+
 HAS_IMG = has_table('imagery_release')
 HAS_POI = has_table('poi')
 HAS_NARR = has_table('narration')
@@ -46,15 +56,14 @@ for row in cur.execute("""SELECT c.id, c.canonical_id, c.label, c.rep_lat, c.rep
     c2.execute("""SELECT o.obs_lat, o.obs_lon, o.payload_json FROM observation o
                   JOIN obs_link l ON l.observation_id=o.id
                   WHERE l.target_canonical_id=? AND o.kind='osm'""", (can_id,))
-    osm_obs_raw = [(r[0], r[1], json.loads(r[2])) for r in c2.fetchall()]
-    osm_count = len(osm_obs_raw)
-    osm_obs = osm_obs_raw[::max(1, osm_count // 1500)][:1500] if osm_count > 1500 else osm_obs_raw
+    # embed every observation (no sampling) — slim format keeps the file size sane
+    osm_obs = [(r[0], r[1], osm_cat(json.loads(r[2]).get('tags', {}))) for r in c2.fetchall()]
+    osm_count = len(osm_obs)
     c2.execute("""SELECT o.obs_lat, o.obs_lon FROM observation o
                   JOIN obs_link l ON l.observation_id=o.id
                   WHERE l.target_canonical_id=? AND o.kind='ms_building'""", (can_id,))
-    ms_obs_raw = [(r[0], r[1]) for r in c2.fetchall()]
-    ms_count = len(ms_obs_raw)
-    ms_obs = ms_obs_raw[:800] if ms_count > 800 else ms_obs_raw
+    ms_obs = [(r[0], r[1]) for r in c2.fetchall()]
+    ms_count = len(ms_obs)
     c2.execute("""SELECT o.payload_json FROM observation o JOIN obs_link l ON l.observation_id=o.id
                   WHERE l.target_canonical_id=? AND o.kind='sanction_entry'""", (can_id,))
     sanctions = [json.loads(r[0]) for r in c2.fetchall()]
@@ -140,7 +149,7 @@ global_events = [{'kind': r[0], 'date': r[1], 'summary': r[2], 'res': r[3], 'url
 top_legals = [{'name': r[0], 'jurisdiction': r[1], 'programs': r[2]}
               for r in cur.execute("""SELECT name, jurisdiction, programs FROM legal_entity
                                       WHERE jurisdiction LIKE '%Cambodia%' OR jurisdiction LIKE '%Burma%'
-                                      ORDER BY id DESC LIMIT 24""")]
+                                      ORDER BY id DESC LIMIT 500""")]
 wallets_summary = [{'chain': r[0], 'count': r[1]} for r in cur.execute("SELECT chain, COUNT(*) FROM wallet GROUP BY chain ORDER BY 2 DESC")]
 
 meta = {
@@ -671,11 +680,10 @@ CANDIDATES.forEach(c=>{
   c._marker=m;
   m.bindTooltip(c.label,{direction:'top'});
   m.on('click',()=>{ tour.active?gotoStop(CANDIDATES.indexOf(c)):startTimeMachine(c); });
+  const OSM_COL={c:'#f8a',h:'#fc8',i:'#bd9',m:'#9c9',r:'#bf8',b:'#5af'};
   c.osm_sample.forEach(o=>{
-    const tg=o[2].tags||{};let col='#5af';
-    if(tg.amenity==='casino')col='#f8a';else if(tg.tourism==='hotel')col='#fc8';
-    else if(tg.landuse==='industrial')col='#bd9';
-    L.circleMarker([o[0],o[1]],{radius:2,weight:0,fillColor:col,fillOpacity:0.55}).addTo(osmLayerObs);
+    L.circleMarker([o[0],o[1]],{radius:2,weight:0,
+      fillColor:OSM_COL[o[2]]||'#5af',fillOpacity:0.55}).addTo(osmLayerObs);
   });
   c.ms_sample.forEach(o=>L.circleMarker([o[0],o[1]],{radius:2,weight:0,fillColor:'#9d6',fillOpacity:0.5}).addTo(msLayerObs));
   c.poi.forEach(p=>{
