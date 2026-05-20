@@ -1,0 +1,47 @@
+MIT License
+
+Copyright (c) 2026 Compound Time Machine contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+Data and content notice (NOT covered by the MIT license above):
+
+This project bundles or links to public data and reporting from third parties.
+Each source retains its own license / terms of use:
+
+  - Satellite imagery: Esri World Imagery / Wayback (Esri terms)
+  - Base map / building data: OpenStreetMap contributors (ODbL); Microsoft
+    Building Footprints (ODbL-equivalent)
+  - Boundary / reference tiles: Esri (Esri terms)
+  - Sanctions data: U.S. Treasury OFAC SDN list (public domain)
+  - Location images in images/: Wikimedia Commons, with per-file CC license
+    recorded in the image_resource table
+  - News article preview images shown by the event viewer: hot-linked from each
+    publisher's og:image. Copyright remains with the original publishers; the
+    viewer surfaces them via link only, with attribution and a source URL.
+  - Narration / event summaries / testimony / daily-life snippets: editorial
+    text written by the project, grounded in public reporting, with source URLs
+    recorded in the database.
+
+Human-trafficking victim testimony is shown anonymized (nationality / role /
+age only; any names are pseudonyms used by the original outlets).
+
+This project is intended for defensive / educational OSINT visualization. Do
+not use it to identify, target, or contact specific individuals.
