@@ -12,7 +12,7 @@ import sqlite3, json, os, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(HERE, 'compounds.db')
-OUT_HTML = os.path.join(HERE, 'dashboard.html')
+OUT_HTML = os.path.join(HERE, 'index.html')
 
 con = sqlite3.connect(DB)
 cur = con.cursor()

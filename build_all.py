@@ -10,8 +10,8 @@ dataset: candidates, observations, sanctions, base events) must already exist â€
 script only regenerates the derived layers on top of it.
 
 Usage:
-  python build_all.py          # run every phase, then rebuild dashboard.html
-  python build_all.py dash     # only rebuild dashboard.html from current DB
+  python build_all.py          # run every phase, then rebuild index.html
+  python build_all.py dash     # only rebuild index.html from current DB
 """
 import subprocess, sys, os, time
 
@@ -24,7 +24,7 @@ PHASES = [
     ('phase8_event_images.py', 'per-event preview images (og:image)'),
     ('phase9_testimony.py',    'survivor / rescuer testimony'),
     ('phase10_local_life.py',  'local-life spots + daily-life snippets'),
-    ('dash5.py',               'render dashboard.html'),
+    ('dash5.py',               'render index.html'),
 ]
 
 if not os.path.exists(os.path.join(HERE, 'compounds.db')):
@@ -40,4 +40,4 @@ for i, (script, desc) in enumerate(steps, 1):
         sys.exit(f'ERROR: {script} failed (exit code {result.returncode}).')
     print(f'--- {script} done in {time.time() - t:.0f}s ---', flush=True)
 
-print(f'\nAll done in {time.time() - start:.0f}s. Open dashboard.html in a browser.')
+print(f'\nAll done in {time.time() - start:.0f}s. Open index.html in a browser.')

@@ -11,12 +11,12 @@
 
 ## 見る
 
-`dashboard.html` をブラウザでダブルクリックするだけ。サーバーもインストールも不要。
+`index.html` をブラウザでダブルクリックするだけ。サーバーもインストールも不要。
 
 - **インターネット接続が必要**です(衛星タイル・国境タイル・事件写真を外部から読み込む
   ため)。オフラインだと地図が表示されません。地図ライブラリ(Leaflet)は `vendor/` に
   同梱済みなので、CDN がブロックされても UI 自体は読み込めます。
-- 共有する場合は **`dashboard.html` ・ `images/` ・ `vendor/`** をセットでコピーして
+- 共有する場合は **`index.html` ・ `images/` ・ `vendor/`** をセットでコピーして
   ください(相対パス参照のため同階層に必要)。
 - 文字コードはUTF-8。Windows / Mac / 主要ブラウザで閲覧できます。
 
@@ -33,8 +33,8 @@
 `pip install` 不要)。
 
 ```
-python build_all.py          # 全フェーズを実行し dashboard.html を再生成
-python build_all.py dash     # dashboard.html だけ再生成(再取得なし)
+python build_all.py          # 全フェーズを実行し index.html を再生成
+python build_all.py dash     # index.html だけ再生成(再取得なし)
 ```
 
 全実行は数分かかり、インターネット接続が必要です(公開APIへアクセス)。各フェーズは
@@ -51,14 +51,14 @@ python build_all.py dash     # dashboard.html だけ再生成(再取得なし)
 | 5 | `phase8_event_images.py` | 各イベントのプレビュー画像URL(og:image) |
 | 6 | `phase9_testimony.py` | 救出者・被害者の証言 |
 | 7 | `phase10_local_life.py` | 周辺の生活拠点 / 日常スニペット |
-| 8 | `dash5.py` | `dashboard.html` を生成 |
+| 8 | `dash5.py` | `index.html` を生成 |
 
 ---
 
 ## ファイル構成
 
 ```
-dashboard.html      成果物(これを開く)
+index.html      成果物(これを開く)
 compounds.db        SQLite データベース(ベース + 派生データ)
 images/             Commons の地点画像(ローカル保存)
 vendor/leaflet/     地図ライブラリ Leaflet 1.9.4(同梱・CDN非依存)
@@ -103,7 +103,7 @@ CamboJA, RFA, Bangkok Post, Khmer Times, VOD, Nikkei Asia ほか公開報道。
 
 **最小セット**(これだけで公開可能、推奨):
 ```
-dashboard.html
+index.html
 images/
 vendor/
 .nojekyll
