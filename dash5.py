@@ -156,6 +156,7 @@ HTML = r"""<!doctype html>
 <title>Compound Time Machine — Mekong</title>
 <meta name="description" content="公開OSINTで作る、メコン地域のオンライン詐欺コンパウンド7地点を衛星のタイムマシン・ガイドツアー・証言で巡る可視化。">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://morigori1.github.io/compound-time-machine/">
 <meta property="og:title" content="Compound Time Machine — メコン詐欺コンパウンドを衛星で巡る">
 <meta property="og:description" content="ジャーナリストでさえ生身では近づけない7つの「閉じた都市」を、衛星のタイムマシンで時間ごと巡るOSINTダッシュボード。">
 <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/f/f6/ShweKokko.jpg">
