@@ -388,56 +388,86 @@ body.swiping #sw-divider,body.swiping .sw-lab{display:block}
 #testimony.folded > :not(.th){display:none}
 #scene-events.folded,#testimony.folded{max-height:none}
 
-/* mobile: panels become bottom overlays toggled via a tab bar (display-based — no transforms) */
+/* mobile: panels become a bottom sheet that covers ~60% of the screen so the map
+   stays partly visible. Tab bar at the bottom switches between sheets. */
 #mobile-tabs{display:none}
 @media (max-width: 760px){
   #app{grid-template-columns:1fr}
   #side{display:none}
-  #bigyear{font-size:34px;top:4px;left:8px}
+  #bigyear{display:none}
   .tm-badge,.legend{display:none}
   .leaflet-control-zoom{display:none}
+  .leaflet-control-attribution{font-size:9px !important}
 
   #tour, #scene-events, #testimony, #tm{
     position:fixed !important;
-    left:0 !important; right:0 !important; top:auto !important; bottom:64px !important;
+    left:0 !important; right:0 !important; top:auto !important; bottom:46px !important;
     width:auto !important; max-width:none !important;
     transform:none !important;
-    max-height:calc(100vh - 80px); overflow-y:auto;
+    max-height:62vh; overflow-y:auto;
     z-index:1400; margin:0;
-    border-radius:12px 12px 0 0;
-    padding:11px 14px 14px;
-    box-shadow:0 -4px 16px rgba(0,0,0,.6);
+    border-radius:14px 14px 0 0;
+    padding:9px 15px 16px;
+    box-shadow:0 -6px 22px rgba(0,0,0,.65);
     display:none !important;
+    background:rgba(11,14,20,.985);
+    -webkit-overflow-scrolling:touch;
+  }
+  /* small drag-handle indicator at the top of each drawer */
+  #tour.mob-open::before,#scene-events.mob-open::before,
+  #testimony.mob-open::before,#tm.mob-open::before{
+    content:""; display:block; width:36px; height:4px; margin:1px auto 8px;
+    background:#3a4560; border-radius:2px;
   }
   #tour.mob-open, #scene-events.mob-open, #testimony.mob-open, #tm.mob-open{
     display:block !important;
   }
   #tour.folded.mob-open,#tm.folded.mob-open,
-  #scene-events.folded.mob-open,#testimony.folded.mob-open{max-height:62px}
+  #scene-events.folded.mob-open,#testimony.folded.mob-open{max-height:70px}
 
+  /* readable typography inside the sheets */
+  #tour .tname{font-size:17px}
+  #tour .ntitle{font-size:13px;margin-top:11px}
+  #tour .nbody{font-size:13.5px;line-height:1.78}
+  #tour-img img{height:80px}
+  #tour .nav{margin-top:14px}
+  #tour .nav button{padding:0 12px;height:34px;font-size:12.5px;min-width:44px}
+  #tour-life .lh{font-size:12.5px;margin-bottom:8px}
+  .life-card{padding:8px 11px}
+  .life-card .lc-topic{font-size:11.5px}
+  .life-card .lc-text{font-size:12.5px;line-height:1.78}
+  #scene-events .sh .st,#testimony .th .tt{font-size:12.5px}
+  .ev-card .ev-img,.ev-card .ev-noimg{width:64px;height:64px}
+  .ev-card .ev-date{font-size:12px}
+  .ev-card .ev-sum{font-size:12.5px;line-height:1.7}
+  .tq .tq-text{font-size:13px;line-height:1.85}
+  .tq .tq-by{font-size:11px}
+  #tm .ttl{font-size:13px}
+  #tm .frame{font-size:11px}
+  #tm .era{font-size:13px;line-height:1.7}
+
+  /* compact tab bar at the very bottom */
   #mobile-tabs{
     display:flex !important;
-    position:fixed; left:6px; right:6px; bottom:6px;
-    z-index:1500; gap:4px;
-    background:rgba(10,12,18,.95); border:1px solid #2a3550;
-    border-radius:9px; padding:5px;
-    box-shadow:0 2px 14px rgba(0,0,0,.6);
+    position:fixed; left:0; right:0; bottom:0;
+    z-index:1500; gap:0;
+    background:rgba(8,11,17,.98); border-top:1px solid #2a3550;
+    padding:4px 4px 5px;
+    box-shadow:0 -2px 12px rgba(0,0,0,.5);
   }
   #mobile-tabs button{
-    flex:1; background:#1f2942; color:#cde;
-    border:1px solid #34425a; border-radius:6px;
-    padding:9px 2px 8px; font-size:10.5px; cursor:pointer; line-height:1.3;
-    -webkit-tap-highlight-color:rgba(74,138,192,.4);
+    flex:1; background:transparent; color:#bcc8d6;
+    border:none; border-radius:6px;
+    padding:5px 2px; font-size:10.5px; cursor:pointer; line-height:1.25;
+    -webkit-tap-highlight-color:rgba(74,138,192,.35);
   }
-  #mobile-tabs button.active{background:#2a5a8a;border-color:#4a8ac0;color:#fff}
+  #mobile-tabs button.active{background:#2a5a8a;color:#fff}
   #mobile-tabs button.disabled{opacity:.32}
 
-  #splash h1{font-size:22px}
-  #splash p{font-size:13px}
-  #splash button{padding:11px 18px;font-size:13px}
-
-  #tour-img img{height:96px}
-  #tour .nav button{padding:0 8px;height:30px;font-size:11.5px}
+  #splash h1{font-size:22px;line-height:1.4}
+  #splash p{font-size:13.5px;line-height:1.9}
+  #splash button{padding:13px 22px;font-size:14px}
+  #splash .kicker{font-size:11px}
 }
 </style></head>
 <body>
